@@ -10,6 +10,7 @@ public class GameScreen implements Screen {
 	
 	private GameWorld world;
 	private GameRenderer renderer;
+	private float runTime = 0;
 	
 	public GameScreen(){
 		float screenWidth = Gdx.graphics.getWidth();
@@ -19,8 +20,8 @@ public class GameScreen implements Screen {
 		
 		int midPointX = (int) (gameWidth / 2);
 
-		world = new GameWorld(midPointX); // initialize world
-		renderer = new GameRenderer(world); // initialize renderer
+		world = new GameWorld(midPointX, (int)gameHeight); // initialize world
+		renderer = new GameRenderer(world, (int)gameHeight, midPointX); // initialize renderer
 		
 		Gdx.input.setInputProcessor(new InputHandler(world.getShip()));
 	}
@@ -33,8 +34,9 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void render(float delta) {
+		runTime += delta;
 		world.update(delta); // GameWorld updates
-		renderer.render(); // GameRenderer renders
+		renderer.render(runTime); // GameRenderer renders
 	}
 
 	@Override

@@ -6,9 +6,9 @@ import com.gamehut.gameobjects.Ship;
 public class GameWorld {
 	private Ship ship;
 	
-	public GameWorld(int midPointX){
+	public GameWorld(int midPointX, int gameHeight){
 		// Initialize ship here
-		ship = new Ship(midPointX, 33, 17, 12);
+		ship = new Ship(midPointX, gameHeight-33, 15, 14);
 	}
 	
 	public void update(float delta){
