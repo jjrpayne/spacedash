@@ -1,5 +1,6 @@
 package com.gamehut.sdhelpers;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.gamehut.gameobjects.Ship;
 
@@ -10,16 +11,16 @@ public class InputHandler implements InputProcessor {
 		myShip = ship;
 	}
 	
-	@Override
 	public boolean keyDown(int keycode) {
-		myShip.move();
+		myShip.move(keycode);
+		Gdx.app.log("InputHandler", "keyDown " + keycode);
 		return true;
 	}
 
-	@Override
 	public boolean keyUp(int keycode) {
-		// TODO Auto-generated method stub
-		return false;
+		myShip.stop(keycode);
+		Gdx.app.log("InputHandler", "keyUp");
+		return true;
 	}
 
 	@Override

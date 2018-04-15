@@ -1,6 +1,7 @@
 package com.gamehut.gameobjects;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Vector2;
 
 public class Ship {
@@ -36,8 +37,17 @@ public class Ship {
 		
 	}
 	
-	public void move(){
+	public void move(int keycode){
+		if (keycode == Keys.LEFT)
+			velocity.x = -140;
+		if (keycode == Keys.RIGHT)
+			velocity.x = 140;
 		
+	}
+	
+	public void stop(int keycode){
+		if (keycode == Keys.LEFT || keycode == Keys.RIGHT)
+			velocity.x = 0;
 	}
 	
     public float getX() {

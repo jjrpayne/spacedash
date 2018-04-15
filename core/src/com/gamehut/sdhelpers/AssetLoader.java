@@ -24,10 +24,10 @@ public class AssetLoader {
         bg = new TextureRegion(texture, 0, 0, 256, 272);
         bg.flip(false, true);
 
-        wallRight = new TextureRegion(texture, 256, 46, 10, 37);
+        wallRight = new TextureRegion(texture, 289, 24, 10, 210);
         wallRight.flip(false, true);
         
-        wallLeft = new TextureRegion(texture, 256, 46, 10, 37);
+        wallLeft = new TextureRegion(texture, 289, 24, 10, 210);
         wallLeft.flip(true, true);
 
         ship = new TextureRegion(texture, 256, 226, 15, 14);
