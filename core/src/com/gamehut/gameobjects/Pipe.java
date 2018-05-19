@@ -8,8 +8,8 @@ public class Pipe extends Scrollable{
 
     // When Pipe's constructor is invoked, invoke the super (Scrollable)
     // constructor
-    public Pipe(float x, float y, int width, int height, float scrollSpeed) {
-        super(x, y, width, height, scrollSpeed);
+    public Pipe(float x, float y, int width, int height, float scrollSpeed, int gameHeight) {
+        super(x, y, width, height, scrollSpeed, gameHeight);
         // Initialize a Random object for Random number generation
         r = new Random();
     }
@@ -18,8 +18,8 @@ public class Pipe extends Scrollable{
     public void reset(float newY) {
         // Call the reset method in the superclass (Scrollable)
         super.reset(newY);
-        // Change the height to a random number
-        height = r.nextInt(90) + 15;
+        // Change the width to a random number
+        width = r.nextInt(50) + 15;
     }
 
 }

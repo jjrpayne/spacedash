@@ -8,10 +8,10 @@ public class GameWorld {
 	private Ship ship;
 	private ScrollHandler scroller;
 	
-	public GameWorld(int midPointX, int gameHeight){
+	public GameWorld(int midPointX, int gameHeight, int gameWidth){
 		// Initialize ship here
 		ship = new Ship(midPointX, gameHeight-33, 15, 14);
-		scroller = new ScrollHandler(0, midPointX + midPointX -10);
+		scroller = new ScrollHandler(0, midPointX + midPointX -10, gameHeight, gameWidth);
 	}
 	
 	public void update(float delta){

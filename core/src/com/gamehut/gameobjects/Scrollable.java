@@ -9,13 +9,15 @@ public class Scrollable {
     protected Vector2 velocity;
     protected int width;
     protected int height;
+    protected int gameHeight;
     protected boolean isScrolledDown;
 
-    public Scrollable(float x, float y, int width, int height, float scrollSpeed) {
+    public Scrollable(float x, float y, int width, int height, float scrollSpeed, int gameHeight) {
         position = new Vector2(x, y);
         velocity = new Vector2(0, scrollSpeed);
         this.width = width;
         this.height = height;
+        this.gameHeight = gameHeight;
         isScrolledDown = false;
     }
 
@@ -23,7 +25,7 @@ public class Scrollable {
         position.add(velocity.cpy().scl(delta));
 
         // If the Scrollable object is no longer visible:
-        if (position.y > height) {
+        if (position.y > gameHeight) {
             isScrolledDown = true;
         }
     }

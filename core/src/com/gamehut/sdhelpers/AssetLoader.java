@@ -14,7 +14,7 @@ public class AssetLoader {
     public static Animation explosionAnimation;
     public static TextureRegion ship, explosion1, explosion2, explosion3, explosion4, explosion5;
 
-    public static TextureRegion pillarTopRight, pillarTopLeft, barRight, barLeft;
+    public static TextureRegion pillarTopRight, pillarTopLeft, pipe;
 
     public static void load() {
 
@@ -52,17 +52,14 @@ public class AssetLoader {
         explosionAnimation = new Animation(0.06f, explosion);
         explosionAnimation.setPlayMode(Animation.PlayMode.NORMAL);
 
-        pillarTopRight = new TextureRegion(texture, 256, 24, 10, 16);
+        pillarTopRight = new TextureRegion(texture, 277, 0, 14, 24);
         pillarTopRight.flip(false,true);
         // Create by flipping existing pillarTopRight
         pillarTopLeft = new TextureRegion(pillarTopRight);
         pillarTopLeft.flip(true, false);
 
-        barRight = new TextureRegion(texture, 266, 24, 22, 15);
-        barRight.flip(false, true);
-        
-        barLeft = new TextureRegion(barRight);
-        barLeft.flip(true, false);
+        pipe = new TextureRegion(texture, 293, 1, 3, 22);
+        pipe.flip(false, true);
 
     }
 

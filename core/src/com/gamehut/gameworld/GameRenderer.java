@@ -22,7 +22,8 @@ public class GameRenderer {
 	
 	private SpriteBatch batcher;
 	
-	private int midPointY;
+	private int midPointX;
+	private int gameWidth;
 	private int gameHeight;
 	
 	// Game Objects
@@ -30,20 +31,21 @@ public class GameRenderer {
 	private ScrollHandler scroller;
 	private Wall topWallLeft, topWallRight, bottomWallLeft, bottomWallRight;
 	private Pipe pipe1, pipe2, pipe3;
-	private Scrollable bg1, bg2;
+	private Scrollable bg1, bg2, bg3;
 	
 	// Game Assets
 	private TextureRegion bg, wallRight, wallLeft;
 	private Animation explosionAnimation;
 	private TextureRegion shipTexture, explosion1, explosion2, explosion3, explosion4, explosion5;
-	private TextureRegion pillarTopRight, pillarTopLeft, barRight, barLeft;
+	private TextureRegion pillarTopRight, pillarTopLeft, pipe;
 	
 	
-	public GameRenderer(GameWorld world, int gameHeight, int midPointY){
+	public GameRenderer(GameWorld world, int gameHeight, int midPointX){
 			myWorld = world;
 			
 			this.gameHeight = gameHeight;
-			this.midPointY = midPointY;
+			this.midPointX = midPointX;
+			this.gameWidth = 2*midPointX;
 
 			cam = new OrthographicCamera();
 			cam.setToOrtho(true, 136, 204);
@@ -72,6 +74,7 @@ public class GameRenderer {
 		pipe3 = scroller.getPipe3();
 		bg1 = scroller.getBg1();
 		bg2 = scroller.getBg2();
+		bg3 = scroller.getBg3();
 	}
 	
 	private void initAssets(){
@@ -87,8 +90,7 @@ public class GameRenderer {
 		explosion5 = AssetLoader.explosion5;
 		pillarTopRight = AssetLoader.pillarTopRight;
 		pillarTopLeft = AssetLoader.pillarTopLeft;
-		barRight = AssetLoader.barRight;
-		barLeft = AssetLoader.barLeft;
+		pipe = AssetLoader.pipe;
 	}
 	
 	private void drawWalls(){
@@ -101,8 +103,29 @@ public class GameRenderer {
 		batcher.draw(wallRight, bottomWallRight.getX(), bottomWallRight.getY(),
 				bottomWallRight.getWidth(), bottomWallRight.getHeight());
 
+	}
 	
+	private void drawPipes(){
+		// Temporary code
+		batcher.draw(pipe, pipe1.getX(), pipe1.getY(), pipe1.getWidth(), pipe1.getHeight());
+		batcher.draw(pipe, pipe1.getX() + pipe1.getWidth() + 45, pipe1.getY(), 
+				gameWidth - (pipe1.getWidth() + 45), pipe1.getHeight());
+		batcher.draw(pipe, pipe2.getX(), pipe2.getY(), pipe2.getWidth(), pipe2.getHeight());
+		batcher.draw(pipe, pipe2.getX() + pipe2.getWidth() + 45, pipe2.getY(), 
+				gameWidth - (pipe2.getWidth() + 45), pipe2.getHeight());
+		batcher.draw(pipe, pipe3.getX(), pipe3.getY(), pipe3.getWidth(), pipe3.getHeight());
+		batcher.draw(pipe, pipe3.getX() + pipe3.getWidth() + 45, pipe3.getY(), 
+				gameWidth - (pipe3.getWidth() + 45), pipe3.getHeight());
 
+	}
+	
+	private void drawSkulls(){
+		batcher.draw(pillarTopLeft, pipe1.getX()+pipe1.getWidth(), pipe1.getY()-1, 14, 24);
+		batcher.draw(pillarTopRight, pipe1.getX()+pipe1.getWidth()+45, pipe1.getY()-1, 14, 24);
+		batcher.draw(pillarTopLeft, pipe2.getX()+pipe2.getWidth(), pipe2.getY()-1, 14, 24);
+		batcher.draw(pillarTopRight, pipe2.getX()+pipe2.getWidth()+45, pipe2.getY()-1, 14, 24);
+		batcher.draw(pillarTopLeft, pipe3.getX()+pipe3.getWidth(), pipe3.getY()-1, 14, 24);
+		batcher.draw(pillarTopRight, pipe3.getX()+pipe3.getWidth()+45, pipe3.getY()-1, 14, 24);
 	}
 	
 	public void render(float runTime) {
@@ -119,11 +142,18 @@ public class GameRenderer {
         // Draw background
         batcher.draw(bg, bg1.getX(), bg1.getY(), bg1.getWidth(), bg1.getHeight());
         batcher.draw(bg, bg2.getX(), bg2.getY(), bg2.getWidth(), bg2.getHeight());
+        batcher.draw(bg, bg3.getX(), bg3.getY(), bg3.getWidth(), bg3.getHeight());
         
         // Enable transparency to draw ship
         batcher.enableBlending();
         
-        // 1 Draw Walls
+        // 1 Draw Pipes
+        drawPipes();
+        
+        // 2 Draw Skulls
+        drawSkulls();
+        
+        // 3 Draw Walls
         drawWalls();
         
         // 4 Draw Ship
