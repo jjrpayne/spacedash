@@ -11,10 +11,12 @@ public class Scrollable {
     protected int height;
     protected int gameHeight;
     protected boolean isScrolledDown;
+    private float scrollSpeed;
 
     public Scrollable(float x, float y, int width, int height, float scrollSpeed, int gameHeight) {
         position = new Vector2(x, y);
         velocity = new Vector2(0, scrollSpeed);
+        this.scrollSpeed = scrollSpeed;
         this.width = width;
         this.height = height;
         this.gameHeight = gameHeight;
@@ -34,6 +36,15 @@ public class Scrollable {
     public void reset(float newY) {
         position.y = newY;
         isScrolledDown = false;
+    }
+    
+    public void onRestart(){
+    	velocity.y = scrollSpeed;
+    }
+    
+    
+    public void stop(){
+    	velocity.y = 0;
     }
 
     // Getters for instance variables

@@ -9,5 +9,10 @@ public class Wall extends Scrollable{
 
     }
     
+    public void onRestart(float y, float scrollSpeed){
+    	position.y = y;
+    	velocity.y = scrollSpeed;
+    }
+    
 
 }
