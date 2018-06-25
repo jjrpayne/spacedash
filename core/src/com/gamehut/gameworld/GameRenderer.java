@@ -16,6 +16,8 @@ import com.gamehut.gameobjects.Scrollable;
 import com.gamehut.gameobjects.Ship;
 import com.gamehut.gameobjects.Wall;
 import com.gamehut.sdhelpers.AssetLoader;
+import com.gamehut.sdhelpers.InputHandler;
+import com.gamehut.ui.SimpleButton;
 
 public class GameRenderer {
 
@@ -25,33 +27,37 @@ public class GameRenderer {
 	
 	private SpriteBatch batcher;
 	
-	private int midPointX;
-	private int gameWidth;
-	private int gameHeight;
+	private float midPointX;
+	private float gameWidth;
+	private float gameHeight;
+	private float gameTime;
 	
 	// Game Objects
 	private Ship ship;
 	private ScrollHandler scroller;
-	private Wall topWallLeft, topWallRight, bottomWallLeft, bottomWallRight;
+	private Scrollable wall1, wall2, wall3, wall4, wall5, wall6;
 	private Pipe pipe1, pipe2, pipe3;
 	private Scrollable bg1, bg2, bg3;
 	
 	// Game Assets
-	private TextureRegion bg, wallRight, wallLeft;
-	private Animation explosionAnimation;
-	private TextureRegion shipTexture, explosion1, explosion2, explosion3, explosion4, explosion5;
+	private TextureRegion bg, wallRight, wallLeft, spaceDashLogo;
+	private Animation explosionAnimation, shipAnimation;
 	private TextureRegion pillarTopRight, pillarTopLeft, pipe;
-	
-	
-	public GameRenderer(GameWorld world, int gameHeight, int midPointX){
+	private TextureRegion arrowLeft, arrowRight;
+
+	private SimpleButton muteButton = ((InputHandler) Gdx.input.getInputProcessor()).getMuteButton();
+	private SimpleButton exitButton = ((InputHandler) Gdx.input.getInputProcessor()).getExitButton();
+
+	public GameRenderer(GameWorld world, float gameHeight, float gameWidth, float midPointX){
 			myWorld = world;
+			gameTime = 0;
 			
 			this.gameHeight = gameHeight;
 			this.midPointX = midPointX;
-			this.gameWidth = 2*midPointX;
+			this.gameWidth = gameWidth;
 
 			cam = new OrthographicCamera();
-			cam.setToOrtho(true, 136, 204);
+			cam.setToOrtho(true, 136, gameHeight);
 			
 			batcher = new SpriteBatch();
 			// Attach batcher to camera
@@ -68,10 +74,12 @@ public class GameRenderer {
 	private void initGameObjects(){
 		ship = myWorld.getShip();
 		scroller = myWorld.getScroller();
-		topWallLeft = scroller.getTopWallLeft();
-		topWallRight = scroller.getTopWallRight();
-		bottomWallLeft = scroller.getBottomWallLeft();
-		bottomWallRight = scroller.getBottomWallRight();
+		wall1 = scroller.getWall1();
+		wall2 = scroller.getWall2();
+		wall3 = scroller.getWall3();
+		wall4 = scroller.getWall4();
+		wall5 = scroller.getWall5();
+		wall6 = scroller.getWall6();
 		pipe1 = scroller.getPipe1();
 		pipe2 = scroller.getPipe2();
 		pipe3 = scroller.getPipe3();
@@ -85,26 +93,28 @@ public class GameRenderer {
 		wallLeft = AssetLoader.wallLeft;
 		wallRight = AssetLoader.wallRight;
 		explosionAnimation = AssetLoader.explosionAnimation;
-		shipTexture = AssetLoader.ship;
-		explosion1 = AssetLoader.explosion1;
-		explosion2 = AssetLoader.explosion2;
-		explosion3 = AssetLoader.explosion3;
-		explosion4 = AssetLoader.explosion4;
-		explosion5 = AssetLoader.explosion5;
+		spaceDashLogo = AssetLoader.spaceDashLogo;
+		shipAnimation = AssetLoader.ship;
 		pillarTopRight = AssetLoader.pillarTopRight;
 		pillarTopLeft = AssetLoader.pillarTopLeft;
 		pipe = AssetLoader.pipe;
+		arrowLeft = AssetLoader.arrowLeft;
+		arrowRight = AssetLoader.arrowRight;
 	}
 	
 	private void drawWalls(){
-		batcher.draw(wallLeft, topWallLeft.getX(), topWallLeft.getY(),
-				topWallLeft.getWidth(), topWallLeft.getHeight());
-		batcher.draw(wallLeft, bottomWallLeft.getX(), bottomWallLeft.getY(),
-				bottomWallLeft.getWidth(), bottomWallLeft.getHeight());
-		batcher.draw(wallRight, topWallRight.getX(), topWallRight.getY(),
-				topWallRight.getWidth(), topWallRight.getHeight());
-		batcher.draw(wallRight, bottomWallRight.getX(), bottomWallRight.getY(),
-				bottomWallRight.getWidth(), bottomWallRight.getHeight());
+		batcher.draw(wallLeft, wall1.getX(), wall1.getY(),
+				wall1.getWidth(), wall1.getHeight());
+		batcher.draw(wallLeft, wall2.getX(), wall2.getY(),
+				wall2.getWidth(), wall2.getHeight());
+		batcher.draw(wallLeft, wall3.getX(), wall3.getY(),
+				wall3.getWidth(), wall3.getHeight());
+		batcher.draw(wallRight, wall4.getX(), wall4.getY(),
+				wall4.getWidth(), wall4.getHeight());
+		batcher.draw(wallRight, wall5.getX(), wall5.getY(),
+				wall5.getWidth(), wall5.getHeight());
+		batcher.draw(wallRight, wall6.getX(), wall6.getY(),
+				wall6.getWidth(), wall6.getHeight());
 
 	}
 	
@@ -161,83 +171,57 @@ public class GameRenderer {
         
         // 4 Draw Ship
         if(ship.isAlive())
-        	batcher.draw(shipTexture, ship.getX(), ship.getY(), ship.getWidth(), ship.getHeight());
+        	batcher.draw((TextureRegion)shipAnimation.getKeyFrame(runTime), ship.getX(), ship.getY(), 16, 24);
         if(!ship.isAlive() && !explosionAnimation.isAnimationFinished(animationTime)){
-        	batcher.draw((TextureRegion) explosionAnimation.getKeyFrame(animationTime), ship.getX(), ship.getY(), 
-        			ship.getWidth(), ship.getHeight());
+        	batcher.draw((TextureRegion) explosionAnimation.getKeyFrame(animationTime), ship.getX()-ship.getWidth()/2, ship.getY()-ship.getHeight()/2,
+        			2*ship.getWidth(), 2*ship.getHeight());
         	animationTime += Gdx.graphics.getDeltaTime();
         }
         
         
-        
-        // Temporary code! Fix this later
+
         if (myWorld.isReady()) {
-        	AssetLoader.font.draw(batcher, "Tap anywhere to start!", (136/2)
-        			- (42 - 1), 75);
+        	AssetLoader.dosfont.draw(batcher, "Tap anywhere\n to start!", (gameWidth/2)-
+					(8f*12f)/2f, gameHeight - 75);
+        	batcher.draw(spaceDashLogo, midPointX - (109/2), 20, 109, 86);
+			muteButton.draw(batcher);
+			exitButton.draw(batcher);
         } else {
         	if(myWorld.isGameOver() || myWorld.isHighScore()){
         		if(myWorld.isGameOver()){
-        			AssetLoader.font.draw(batcher, "Game Over", 25, 56);
-        			String highScore = AssetLoader.getHighScore() + "";
-        			AssetLoader.font.draw(batcher, "High Score: " + highScore, 23, 105);
+        			AssetLoader.dosfont.draw(batcher, "Game Over :(", (gameWidth/2)-((12*8)/2), (gameHeight/2)-4);
+        			String highScore ="High Score: " + AssetLoader.getHighScore();
+        			AssetLoader.dosfont.draw(batcher, highScore, (gameWidth/2)-((highScore.length()*8)/2), (gameHeight/2)+4);
         		} else {
-        			AssetLoader.font.draw(batcher, "High Score!", 18, 55);
+        			AssetLoader.dosfont.draw(batcher, "High Score!", (gameWidth/2)-(8*11)/2, (gameHeight/2)-4);
         		}
-        		AssetLoader.font.draw(batcher,  "Try again?", 24, 75);
         	}
+        	if(gameTime < 2){
+        		gameTime += Gdx.graphics.getDeltaTime();
+        		if(AssetLoader.getHighScore() == 0) {
+					AssetLoader.dosfont.draw(batcher, "Tilt!", (gameWidth / 2) - (5 * 8 / 2), gameHeight - 75);
+					batcher.draw(arrowLeft, (gameWidth / 2) - (5 * 8 / 2) - 10, gameHeight - 75, 10, 10);
+					batcher.draw(arrowRight, (gameWidth / 2) + (5 * 8 / 2), gameHeight - 75, 10, 10);
+				}
+			}
         	// convert integer into String
         	String score = myWorld.getScore()+"";
         
         	// draw text
-       		AssetLoader.font.draw(batcher, "" + myWorld.getScore(), (136 / 2) - (3 * score.length() - 1), 11);
+       		AssetLoader.dosfont.draw(batcher, score, gameWidth - 2-8*score.length(), 2);
 
         }
 
         batcher.end();
-        
-        /*
-        
-        // temporary code
-        
-        shapeRenderer.begin(ShapeType.Filled);
-        shapeRenderer.setColor(Color.RED);
-        shapeRenderer.circle(ship.getBoundingCircle().x, ship.getBoundingCircle().y, 
-        	ship.getBoundingCircle().radius);
-         
-        // Bar up for pipes 1 2 and 3
-        shapeRenderer.rect(pipe1.getBarLeft().x, pipe1.getBarLeft().y,
-                pipe1.getBarLeft().width, pipe1.getBarLeft().height);
-        shapeRenderer.rect(pipe2.getBarLeft().x, pipe2.getBarLeft().y,
-                pipe2.getBarLeft().width, pipe2.getBarLeft().height);
-        shapeRenderer.rect(pipe3.getBarLeft().x, pipe3.getBarLeft().y,
-                pipe3.getBarLeft().width, pipe3.getBarLeft().height);
+		/* test bounding circle
+		shapeRenderer.begin(ShapeType.Filled);
+		shapeRenderer.setColor(Color.RED);
+		shapeRenderer.circle(ship.getBoundingCircle().x,
+				ship.getBoundingCircle().y, ship.getBoundingCircle().radius);
+		shapeRenderer.end();
+		*/
 
-        // Bar down for pipes 1 2 and 3
-        shapeRenderer.rect(pipe1.getBarRight().x, pipe1.getBarRight().y,
-                pipe1.getBarRight().width, pipe1.getBarRight().height);
-        shapeRenderer.rect(pipe2.getBarRight().x, pipe2.getBarRight().y,
-                pipe2.getBarRight().width, pipe2.getBarRight().height);
-        shapeRenderer.rect(pipe3.getBarRight().x, pipe3.getBarRight().y,
-                pipe3.getBarRight().width, pipe3.getBarRight().height);
 
-        // Skull up for Pipes 1 2 and 3
-        shapeRenderer.rect(pipe1.getSkullLeft().x, pipe1.getSkullLeft().y,
-                pipe1.getSkullLeft().width, pipe1.getSkullLeft().height);
-        shapeRenderer.rect(pipe2.getSkullLeft().x, pipe2.getSkullLeft().y,
-                pipe2.getSkullLeft().width, pipe2.getSkullLeft().height);
-        shapeRenderer.rect(pipe3.getSkullLeft().x, pipe3.getSkullLeft().y,
-                pipe3.getSkullLeft().width, pipe3.getSkullLeft().height);
-
-        // Skull down for Pipes 1 2 and 3
-        shapeRenderer.rect(pipe1.getSkullRight().x, pipe1.getSkullRight().y,
-                pipe1.getSkullRight().width, pipe1.getSkullRight().height);
-        shapeRenderer.rect(pipe2.getSkullRight().x, pipe2.getSkullRight().y,
-                pipe2.getSkullRight().width, pipe2.getSkullRight().height);
-        shapeRenderer.rect(pipe3.getSkullRight().x, pipe3.getSkullRight().y,
-                pipe3.getSkullRight().width, pipe3.getSkullRight().height);
-        shapeRenderer.end();
-        
-        */
 	}
 
 }

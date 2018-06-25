@@ -1,5 +1,5 @@
 android {
-    buildToolsVersion "25.0.2"
+    buildToolsVersion '27.0.3'
     compileSdkVersion 25
     sourceSets {
         main {
@@ -19,9 +19,10 @@ android {
     }
     defaultConfig {
         applicationId "com.gamehut.spacedash"
-        minSdkVersion 9
+        minSdkVersion 14
         targetSdkVersion 25
     }
+
 }
 
 

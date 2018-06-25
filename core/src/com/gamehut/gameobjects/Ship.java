@@ -10,16 +10,18 @@ public class Ship {
 	private Vector2 position;
 	private Vector2 velocity;
 	private Vector2 acceleration;
+	private float currentAccel;
+	private float lastAccel;
 	
-	private int width;
-	private int height;
+	private float width;
+	private float height;
 	private float originalY;
 	
 	private boolean isAlive;
 	
 	private Circle boundingCircle;
 	
-	public Ship(float x, float y, int width, int height){
+	public Ship(float x, float y, float width, float height){
 		originalY = y;
 		this.width = width;
 		this.height = height;
@@ -28,25 +30,29 @@ public class Ship {
 		acceleration = new Vector2(0, 0);
 		boundingCircle = new Circle();
 		isAlive = true;
+		currentAccel = 0;
+		lastAccel = 0;
 	}
 	
 	public void update(float delta){
-		
-		acceleration.x = Gdx.input.getAccelerometerX();
-		
-		velocity.add(acceleration.cpy().scl(delta));
-		if(velocity.y > 200){
-			velocity.y = 200;
-		}
-		
-		position.add(velocity.cpy().scl(delta));
-		boundingCircle.set((float) (position.x+7.5), position.y+8, 7f);
+		//Gdx.app.log("ship", velocity+"");
+		// velocity.add(acceleration.cpy());;
+		// position.add(velocity.cpy().scl(delta));
+		position.x += velocity.x * delta;
+		position.y += velocity.y * delta;
+		float alpha = 0.25f;
+		if(isAlive)
+			currentAccel = -Gdx.input.getAccelerometerX();
+		currentAccel = currentAccel * alpha + lastAccel*(1-alpha);
+		lastAccel = currentAccel;
+		position.x += currentAccel*150*delta;
+		boundingCircle.set((position.x+7.6f), position.y+8, 7.5f);
 		if(!isAlive)
-			velocity.y = -118;
+			velocity.y = -180;
 
 	}
 	
-	public void onRestart(int x){
+	public void onRestart(float x){
 		position.x = x;
 		position.y = originalY;
 		velocity.x = 0;

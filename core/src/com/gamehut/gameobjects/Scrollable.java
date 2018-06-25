@@ -7,13 +7,13 @@ public class Scrollable {
     // Protected is similar to private, but allows inheritance by subclasses.
     protected Vector2 position;
     protected Vector2 velocity;
-    protected int width;
-    protected int height;
-    protected int gameHeight;
+    protected float width;
+    protected float height;
+    protected float gameHeight;
     protected boolean isScrolledDown;
     private float scrollSpeed;
 
-    public Scrollable(float x, float y, int width, int height, float scrollSpeed, int gameHeight) {
+    public Scrollable(float x, float y, float width, float height, float scrollSpeed, float gameHeight) {
         position = new Vector2(x, y);
         velocity = new Vector2(0, scrollSpeed);
         this.scrollSpeed = scrollSpeed;
@@ -24,7 +24,8 @@ public class Scrollable {
     }
 
     public void update(float delta) {
-        position.add(velocity.cpy().scl(delta));
+        //position.add(velocity.cpy().scl(delta));
+        position.y += velocity.y*delta;
 
         // If the Scrollable object is no longer visible:
         if (position.y > gameHeight) {
@@ -64,11 +65,11 @@ public class Scrollable {
         return position.y;
     }
 
-    public int getWidth() {
+    public float getWidth() {
         return width;
     }
 
-    public int getHeight() {
+    public float getHeight() {
         return height;
     }
 

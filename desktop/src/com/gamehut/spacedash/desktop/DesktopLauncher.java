@@ -10,6 +10,6 @@ public class DesktopLauncher {
         config.title = "Space Dash";
         config.width = 272;
         config.height = 408;
-        new LwjglApplication(new SDGame(), config);
+        new LwjglApplication(new SDGame(null), config);
     }
 }

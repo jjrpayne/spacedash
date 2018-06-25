@@ -9,23 +9,24 @@ public class GameWorld {
 	private Ship ship;
 	private ScrollHandler scroller;
 	private int score = 0;
-	private int midPointX;
+	private float midPointX;
+	private boolean muted = false;
 	//private int gameHeight;
 	//private int gameWidth;
-	
+
 	private GameState currentState;
 	
 	public enum GameState{
 		READY, RUNNING, GAMEOVER, HIGHSCORE
 	}
 	
-	public GameWorld(int midPointX, int gameHeight, int gameWidth){
+	public GameWorld(float midPointX, float gameHeight, float gameWidth){
 		currentState = GameState.READY;
 		// Initialize ship here
 		this.midPointX = midPointX;
 //		this.gameHeight = gameHeight;
 //		this.gameWidth = gameWidth;
-		ship = new Ship(midPointX, gameHeight-33, 15, 14);
+		ship = new Ship(midPointX-(16/2), gameHeight-33, 16, 16);
 		scroller = new ScrollHandler(0, midPointX + midPointX -10, gameHeight, gameWidth, this);
 	}
 	
@@ -48,19 +49,22 @@ public class GameWorld {
 	}
 	
 	public void updateRunning(float delta){
-		Gdx.app.log("Gameworld", "update");
+		//Gdx.app.log("Gameworld", "update");
 		ship.update(delta);
 		scroller.updateRunning(delta);
 		
-		if(ship.isAlive() && scroller.collides(ship)){
+		if(ship.isAlive() && scroller.collides(ship, muted)){
 			// Clean up on game over
 			scroller.stop();
 			ship.die();
-			AssetLoader.dead.play();
+			if(!muted)
+				AssetLoader.dead.play();
 			currentState = GameState.GAMEOVER;
 			
 			if(score > AssetLoader.getHighScore()){
 				AssetLoader.setHighScore(score);
+				if(!muted)
+					AssetLoader.hiscore.play();
 				currentState = GameState.HIGHSCORE;
 			}
 		}
@@ -73,7 +77,7 @@ public class GameWorld {
 	public void restart(){
 		currentState = GameState.READY;
 		score = 0;
-		ship.onRestart(midPointX);
+		ship.onRestart(midPointX-(16/2));
 		scroller.onRestart();
 		currentState = GameState.READY;
 	}
@@ -108,6 +112,12 @@ public class GameWorld {
 	
 	public boolean isHighScore(){
 		return currentState == GameState.HIGHSCORE;
+	}
+
+	public boolean isMuted() { return muted; }
+
+	public void setMuted(boolean muted){
+		this.muted = muted;
 	}
 
 }

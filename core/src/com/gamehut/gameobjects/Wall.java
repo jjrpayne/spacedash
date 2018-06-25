@@ -8,11 +8,7 @@ public class Wall extends Scrollable{
         super(x, y, width, height, scrollSpeed, gameHeight);
 
     }
-    
-    public void onRestart(float y, float scrollSpeed){
-    	position.y = y;
-    	velocity.y = scrollSpeed;
-    }
+
     
 
 }

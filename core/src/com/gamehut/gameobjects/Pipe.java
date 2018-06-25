@@ -9,7 +9,7 @@ public class Pipe extends Scrollable{
 	
     private Random r;
     private Rectangle skullLeft, skullRight, barLeft, barRight;
-    private int gameWidth;
+    private float gameWidth;
     private boolean isScored = false;
     
     public static final int HORIZONTAL_GAP = 45;
@@ -18,8 +18,8 @@ public class Pipe extends Scrollable{
 
     // When Pipe's constructor is invoked, invoke the super (Scrollable)
     // constructor
-    public Pipe(float x, float y, int width, int height, float scrollSpeed, 
-    		int gameHeight, int gameWidth){
+    public Pipe(float x, float y, float width, float height, float scrollSpeed,
+    		float gameHeight, float gameWidth){
         super(x, y, width, height, scrollSpeed, gameHeight);
         // Initialize a Random object for Random number generation
         r = new Random();
