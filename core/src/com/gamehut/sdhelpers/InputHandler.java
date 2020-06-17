@@ -5,6 +5,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.gamehut.gameobjects.Ship;
 import com.gamehut.gameworld.GameWorld;
 import com.gamehut.ui.SimpleButton;
+import com.badlogic.gdx.Input.Keys;
 
 public class InputHandler implements InputProcessor {
 	private GameWorld myWorld;
@@ -36,13 +37,13 @@ public class InputHandler implements InputProcessor {
 
 
 	public boolean keyDown(int keycode) {
-		//myShip.move(keycode);
+		myShip.move(keycode);
 		Gdx.app.log("InputHandler", "keyDown " + keycode);
 		return true;
 	}
 
 	public boolean keyUp(int keycode) {
-		//myShip.stop(keycode);
+		myShip.stop(keycode);
 		Gdx.app.log("InputHandler", "keyUp");
 		return true;
 	}
@@ -66,10 +67,18 @@ public class InputHandler implements InputProcessor {
 				myWorld.start();
 		}
 
+	    if(myWorld.isRunning()){
+	    	if(screenX < gameWidth/2)
+	    		myShip.move(Keys.LEFT);
+	    	else
+	    		myShip.move(Keys.RIGHT);
+		}
+
 		myShip.fire();
 		
 		if (myWorld.isGameOver() || myWorld.isHighScore()){
-			myWorld.restart();
+			if(myShip.getY() < 0 - myShip.getHeight())
+				myWorld.restart();
 		}
 		return true; // return true to say we handled the touch
 	}
@@ -93,6 +102,10 @@ public class InputHandler implements InputProcessor {
 			} else if (exitButton.isTouchUp(screenX, screenY)){
 				Gdx.app.exit();
 			}
+		}
+
+		if(myWorld.isRunning()){
+			myShip.stop();
 		}
 		return true;
 	}
