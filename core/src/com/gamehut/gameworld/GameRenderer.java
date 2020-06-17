@@ -41,9 +41,10 @@ public class GameRenderer {
 	
 	// Game Assets
 	private TextureRegion bg, wallRight, wallLeft, spaceDashLogo;
-	private Animation explosionAnimation, shipAnimation;
+	private Animation explosionAnimation, flame;
 	private TextureRegion pillarTopRight, pillarTopLeft, pipe;
 	private TextureRegion arrowLeft, arrowRight;
+	private TextureRegion shipTexture, shipLeft, shipRight;
 
 	private SimpleButton muteButton = ((InputHandler) Gdx.input.getInputProcessor()).getMuteButton();
 	private SimpleButton exitButton = ((InputHandler) Gdx.input.getInputProcessor()).getExitButton();
@@ -94,7 +95,10 @@ public class GameRenderer {
 		wallRight = AssetLoader.wallRight;
 		explosionAnimation = AssetLoader.explosionAnimation;
 		spaceDashLogo = AssetLoader.spaceDashLogo;
-		shipAnimation = AssetLoader.ship;
+		shipTexture = AssetLoader.ship;
+		shipLeft = AssetLoader.shipLeft;
+		shipRight = AssetLoader.shipRight;
+		flame = AssetLoader.flame;
 		pillarTopRight = AssetLoader.pillarTopRight;
 		pillarTopLeft = AssetLoader.pillarTopLeft;
 		pipe = AssetLoader.pipe;
@@ -170,8 +174,15 @@ public class GameRenderer {
         drawWalls();
         
         // 4 Draw Ship
-        if(ship.isAlive())
-        	batcher.draw((TextureRegion)shipAnimation.getKeyFrame(runTime), ship.getX(), ship.getY(), 16, 24);
+        if(ship.isAlive()) {
+        	if(ship.getXVelocity() < -100)
+				batcher.draw(shipLeft, ship.getX(), ship.getY(), ship.getWidth(), ship.getHeight());
+        	else if (ship.getXVelocity() > 100)
+				batcher.draw(shipRight, ship.getX(), ship.getY(), ship.getWidth(), ship.getHeight());
+        	else
+				batcher.draw(shipTexture, ship.getX(), ship.getY(), ship.getWidth(), ship.getHeight());
+			batcher.draw((TextureRegion) flame.getKeyFrame(runTime), ship.getX(), ship.getY()+16, 16, 9);
+		}
         if(!ship.isAlive() && !explosionAnimation.isAnimationFinished(animationTime)){
         	batcher.draw((TextureRegion) explosionAnimation.getKeyFrame(animationTime), ship.getX()-ship.getWidth()/2, ship.getY()-ship.getHeight()/2,
         			2*ship.getWidth(), 2*ship.getHeight());
@@ -182,24 +193,30 @@ public class GameRenderer {
 
         if (myWorld.isReady()) {
         	AssetLoader.dosfont.draw(batcher, "Tap anywhere\n to start!", (gameWidth/2)-
-					(8f*12f)/2f, gameHeight - 75);
+					(8f*12f)/2f, gameHeight - 85);
         	batcher.draw(spaceDashLogo, midPointX - (109/2), 20, 109, 86);
 			muteButton.draw(batcher);
 			exitButton.draw(batcher);
         } else {
-        	if(myWorld.isGameOver() || myWorld.isHighScore()){
-        		if(myWorld.isGameOver()){
-        			AssetLoader.dosfont.draw(batcher, "Game Over :(", (gameWidth/2)-((12*8)/2), (gameHeight/2)-4);
-        			String highScore ="High Score: " + AssetLoader.getHighScore();
-        			AssetLoader.dosfont.draw(batcher, highScore, (gameWidth/2)-((highScore.length()*8)/2), (gameHeight/2)+4);
-        		} else {
-        			AssetLoader.dosfont.draw(batcher, "High Score!", (gameWidth/2)-(8*11)/2, (gameHeight/2)-4);
-        		}
-        	}
+        	if(myWorld.isGameOver() || myWorld.isHighScore()) {
+				if (myWorld.isGameOver()) {
+					AssetLoader.dosfont.draw(batcher, "Game Over :(", (gameWidth / 2) - ((12 * 8) / 2), (gameHeight / 2) - 12);
+					String highScore = "High Score: " + AssetLoader.getHighScore();
+					AssetLoader.dosfont.draw(batcher, highScore, (gameWidth / 2) - ((highScore.length() * 8) / 2), (gameHeight / 2) - 4);
+
+				} else {
+					AssetLoader.dosfont.draw(batcher, "High Score!", (gameWidth / 2) - (8 * 11) / 2, (gameHeight / 2) - 4);
+				}
+
+				if (ship.getY() < 0 - ship.getHeight()) {
+					AssetLoader.dosfont.draw(batcher, "Tap anywhere", (gameWidth / 2) - ((12 * 8) / 2), (gameHeight / 2) + 12);
+					AssetLoader.dosfont.draw(batcher, "to restart", (gameWidth / 2) - ((12 * 8) / 2), (gameHeight / 2) + 20);
+				}
+			}
         	if(gameTime < 2){
         		gameTime += Gdx.graphics.getDeltaTime();
         		if(AssetLoader.getHighScore() == 0) {
-					AssetLoader.dosfont.draw(batcher, "Tilt!", (gameWidth / 2) - (5 * 8 / 2), gameHeight - 75);
+					AssetLoader.dosfont.draw(batcher, "Tap!", (gameWidth / 2) - (5 * 8 / 2), gameHeight - 75);
 					batcher.draw(arrowLeft, (gameWidth / 2) - (5 * 8 / 2) - 10, gameHeight - 75, 10, 10);
 					batcher.draw(arrowRight, (gameWidth / 2) + (5 * 8 / 2), gameHeight - 75, 10, 10);
 				}
