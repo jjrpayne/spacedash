@@ -14,27 +14,29 @@ public class AssetLoader {
     public static final int EXPLOSION_SIZE = 32;
     public static Texture texture;
     public static TextureRegion bg, wallRight, wallLeft;
-    
+
     public static Sound dead, coin, hiscore, mute;
 
     public static Animation explosionAnimation;
-    public static Animation ship;
-    public static TextureRegion ship1, ship2, explosion1, explosion2, explosion3,
+    public static TextureRegion ship, shipLeft, shipRight;
+    public static TextureRegion explosion1, explosion2, explosion3,
             explosion4, explosion5, explosion6, explosion7, explosion8,
             explosion9, explosion10, explosion11, explosion12;
+    public static TextureRegion flame1, flame2;
+    public static Animation flame;
     public static TextureRegion pillarTopRight, pillarTopLeft, pipe;
     public static TextureRegion spaceDashLogo, arrowLeft, arrowRight;
     public static TextureRegion playUp, playDown, soundOnUp, soundOnDown;
     public static TextureRegion soundOffUp, soundOffDown, exitUp, exitDown;
-    
+
     public static BitmapFont font, dosfont;
-    
+
     public static Preferences prefs;
 
     public static void load() {
-    	
-    	dead = Gdx.audio.newSound(Gdx.files.internal("data/dead.wav"));
-    	coin = Gdx.audio.newSound(Gdx.files.internal("data/coin.wav"));
+
+        dead = Gdx.audio.newSound(Gdx.files.internal("data/dead.wav"));
+        coin = Gdx.audio.newSound(Gdx.files.internal("data/coin.wav"));
         hiscore = Gdx.audio.newSound(Gdx.files.internal("data/hiscore.wav"));
         mute = Gdx.audio.newSound(Gdx.files.internal("data/coin1.wav"));
 
@@ -46,18 +48,25 @@ public class AssetLoader {
 
         wallRight = new TextureRegion(texture, 289, 24, 10, 210);
         wallRight.flip(false, true);
-        
+
         wallLeft = new TextureRegion(texture, 289, 24, 10, 210);
         wallLeft.flip(true, true);
 
-        ship1 = new TextureRegion(texture, 370, 222, 16, 24);
-        ship1.flip(false, true);
-        ship2 = new TextureRegion(texture, 370, 246, 16, 24);
-        ship2.flip(false, true);
+        ship = new TextureRegion(texture, 370, 222, 16, 16);
+        shipLeft = new TextureRegion(texture, 354, 222, 16, 16);
+        shipRight = new TextureRegion(texture, 386, 222, 16, 16);
+        ship.flip(false, true);
+        shipLeft.flip(false, true);
+        shipRight.flip(false, true);
 
-        TextureRegion[] ships = {ship1, ship2};
-        ship = new Animation(0.1f, ships);
-        ship.setPlayMode(Animation.PlayMode.LOOP);
+        flame1 = new TextureRegion(texture, 370, 237, 16, 9);
+        flame2 = new TextureRegion(texture, 370, 261, 16, 9);
+        flame1.flip(false, true);
+        flame2.flip(false, true);
+
+        TextureRegion[] flames = {flame1, flame2};
+        flame = new Animation(0.1f, flames);
+        flame.setPlayMode(Animation.PlayMode.LOOP);
 
         explosion1 = new TextureRegion(texture, 0, 272, EXPLOSION_SIZE, EXPLOSION_SIZE);
         explosion1.flip(false, true);
@@ -104,7 +113,7 @@ public class AssetLoader {
         exitDown.flip(false, true);
 
         TextureRegion[] explosion = {explosion1, explosion2, explosion3, explosion4, explosion5, explosion6,
-        explosion7, explosion8, explosion9, explosion10, explosion11, explosion12};
+                explosion7, explosion8, explosion9, explosion10, explosion11, explosion12};
         explosionAnimation = new Animation(0.06f, explosion);
         explosionAnimation.setPlayMode(Animation.PlayMode.LOOP);
 
@@ -121,16 +130,16 @@ public class AssetLoader {
         arrowRight.flip(false, true);
         arrowLeft = new TextureRegion(texture,334, 152, 10, 10);
         arrowLeft.flip(true, true);
-        
+
         font = new BitmapFont(Gdx.files.internal("data/pixel.fnt"), true);
         dosfont = new BitmapFont(Gdx.files.internal("data/dos.fnt"), true);
-        
+
         // Create (or retrieve existing) preferences file
         prefs = Gdx.app.getPreferences("SpaceDash");
-        
-       // Provide default high score of 0
+
+        // Provide default high score of 0
         if(!prefs.contains("highScore")){
-        	prefs.putInteger("highScore", 0);
+            prefs.putInteger("highScore", 0);
         }
 
     }
@@ -141,14 +150,14 @@ public class AssetLoader {
         dead.dispose();
         font.dispose();
     }
-    
+
     public static void setHighScore(int val){
-    	prefs.putInteger("highScore", val);
-    	prefs.flush();
+        prefs.putInteger("highScore", val);
+        prefs.flush();
     }
-    
+
     public static int getHighScore(){
-    	return prefs.getInteger("highScore");
+        return prefs.getInteger("highScore");
     }
 
 }

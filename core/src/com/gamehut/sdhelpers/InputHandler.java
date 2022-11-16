@@ -37,13 +37,15 @@ public class InputHandler implements InputProcessor {
 
 
 	public boolean keyDown(int keycode) {
-		myShip.move(keycode);
+		if (myWorld.isRunning()) {
+			myShip.move(keycode);
+		}
 		Gdx.app.log("InputHandler", "keyDown " + keycode);
 		return true;
 	}
 
 	public boolean keyUp(int keycode) {
-		myShip.stop(keycode);
+		myShip.stop();
 		Gdx.app.log("InputHandler", "keyUp");
 		return true;
 	}
@@ -123,8 +125,7 @@ public class InputHandler implements InputProcessor {
 	}
 
 	@Override
-	public boolean scrolled(int amount) {
-		// TODO Auto-generated method stub
+	public boolean scrolled(float amountX, float amountY) {
 		return false;
 	}
 
